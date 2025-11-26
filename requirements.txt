@@ -1,0 +1,14 @@
+fastapi
+uvicorn
+gunicorn
+geopandas
+networkx
+numpy
+osmnx
+pandas
+requests
+shapely
+openpyxl
+scikit-learn
+folium
+python-dotenv
