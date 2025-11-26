@@ -4,7 +4,7 @@ python model.py
 
 모델 인자들
 
-MAIN_START_LAT = START_LAT
+    MAIN_START_LAT = START_LAT
     
     MAIN_START_LON = START_LON
     
