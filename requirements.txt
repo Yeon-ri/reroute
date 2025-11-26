@@ -11,3 +11,4 @@ shapely
 openpyxl
 scikit-learn
 folium
+python-dotenv
