@@ -45,17 +45,23 @@ def health_check():
 
 @app.post("/calculate-route")
 def calculate_route(
-        req: RouteRequest,
-        sub: str = Depends(get_current_user_sub),  # 1. 토큰 검증 & sub 추출
-        db: Session = Depends(get_db)  # 2. RDS 세션 연결
+        req: RouteRequest
+        # sub: str = Depends(get_current_user_sub),  <-- [주석 처리] 토큰 검증 안 함
+        # db: Session = Depends(get_db)              <-- [주석 처리] DB 연결 안 함
 ):
-    # 3. RDS에서 sub로 user_id 찾기
-    user = db.query(User).filter(User.sub == sub).first()
-    if not user:
-        # 토큰은 정상이지만 DB에 유저 정보가 없는 경우
-        raise HTTPException(status_code=404, detail="User not found in RDS")
+    # ---------------------------------------------------------
+    # [테스트 모드] 인증 로직 우회 및 매직 넘버 설정
+    # ---------------------------------------------------------
 
-    internal_user_id = user.id
+    # user = db.query(User).filter(User.sub == sub).first() <-- [주석 처리]
+    # if not user:
+    #     raise HTTPException(status_code=404, detail="User not found in RDS")
+
+    internal_user_id = 99999
+
+    print(f"⚠️ [TEST MODE] 인증 없이 테스트 ID({internal_user_id})로 실행합니다.")
+
+    # ---------------------------------------------------------
 
     try:
         # 4. 경로 계산 (기존 로직)
@@ -78,10 +84,9 @@ def calculate_route(
         }
 
         # 5. DynamoDB에 저장
-        # Partition Key: user_id, Sort Key: timestamp (추천 스키마)
         item = {
             "route_id": str(uuid.uuid4()),
-            "user_id": str(internal_user_id),  # Partition Key
+            "user_id": str(internal_user_id),  # Partition Key (99999가 들어감)
             "timestamp": int(time.time()),  # Sort Key
             "created_at": datetime.now().isoformat(),
             "start_point": {"lat": Decimal(str(req.start_lat)), "lon": Decimal(str(req.start_lon))},
