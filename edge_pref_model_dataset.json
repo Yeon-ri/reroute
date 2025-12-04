@@ -16,9 +16,7 @@
     0.5811854590010319,
     0.0,
     3.288629914877117,
-    -0.16699303692630468,
-    -1.9601090198868816,
-    1.9601090198868296
+    -0.16699303692630468
   ],
   "features": [
     "bias",
@@ -37,9 +35,7 @@
     "hw_steps",
     "hw_track",
     "hw_living_street",
-    "hw_pedestrian",
-    "hour_sin",
-    "hour_cos"
+    "hw_pedestrian"
   ],
   "meta": {
     "epochs": 12,
