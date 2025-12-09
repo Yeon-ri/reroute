@@ -172,11 +172,11 @@ def calculate_route(
         logger.error(f"Error processing: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
         
-    @app.get("/show-map")
-    def show_map():
-        file_path = "/app/model_test/compare.html"
+@app.get("/show-map")
+def show_map():
+    file_path = "/app/model_test/compare.html"
         
-        if os.path.exists(file_path):
-            return FileResponse(file_path)
-        else:
-            return {"error": "지도 파일이 아직 생성되지 않았습니다. /calculate-route 를 먼저 실행하세요."}
+    if os.path.exists(file_path):
+        return FileResponse(file_path)
+    else:
+        return {"error": "지도 파일이 아직 생성되지 않았습니다. /calculate-route 를 먼저 실행하세요."}
