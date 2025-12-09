@@ -1,4 +1,5 @@
 from fastapi import FastAPI, HTTPException, BackgroundTasks
+from fastapi.responses import FileResponse
 from pydantic import BaseModel
 import os
 from model import run_pipeline, PipelineResult
@@ -170,3 +171,12 @@ def calculate_route(
     except Exception as e:
         logger.error(f"Error processing: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
+        
+    @app.get("/show-map")
+    def show_map():
+        file_path = "/app/model_test/compare.html"
+        
+        if os.path.exists(file_path):
+            return FileResponse(file_path)
+        else:
+            return {"error": "지도 파일이 아직 생성되지 않았습니다. /calculate-route 를 먼저 실행하세요."}
