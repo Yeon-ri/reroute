@@ -13,7 +13,6 @@ import time
 from datetime import datetime
 from decimal import Decimal
 from auth import get_current_user_sub
-from database import get_db, User
 import uuid
 
 # ---------------------------------------------------------
@@ -117,7 +116,7 @@ def calculate_route(
             app_key=os.getenv("TMAP_APP_KEY"),
             cctv_path="./cctv_data.xlsx",
             model_path="./edge_pref_model_dataset.json",
-            html_out="/app/model_test/compare.html"
+            html_out=None
         )
 
         # 2. 직사각형 범위(Bounding Box) 계산
@@ -145,38 +144,29 @@ def calculate_route(
             "rerouted": result.rerouted,
             "base_weight": result.base_weight,
             "rerouted_weight": result.rerouted_weight,
-            # [추가됨] 주변 안전 시설물 정보
             "safety_features": {
                 "cctvs": nearby_cctvs,
                 "streetlights": nearby_streetlights,
                 "police_stations": nearby_police
-            }
+            },
+            "grid_visualization": result.visual_segments
         }
 
         # 5. DynamoDB 저장 (시설물 정보까지 포함할지 여부는 선택, 여기선 포함함)
-        item = {
-            "route_id": str(uuid.uuid4()),
-            "user_id": str(internal_user_id),
-            "timestamp": int(time.time()),
-            "created_at": datetime.now().isoformat(),
-            "start_point": {"lat": Decimal(str(req.start_lat)), "lon": Decimal(str(req.start_lon))},
-            "end_point": {"lat": Decimal(str(req.end_lat)), "lon": Decimal(str(req.end_lon))},
-            "route_data": float_to_decimal(response_data)
-        }
+        # item = {
+        #     "route_id": str(uuid.uuid4()),
+        #     "user_id": str(internal_user_id),
+        #     "timestamp": int(time.time()),
+        #     "created_at": datetime.now().isoformat(),
+        #     "start_point": {"lat": Decimal(str(req.start_lat)), "lon": Decimal(str(req.start_lon))},
+        #     "end_point": {"lat": Decimal(str(req.end_lat)), "lon": Decimal(str(req.end_lon))},
+        #     "route_data": float_to_decimal(response_data)
+        # }
 
-        background_tasks.add_task(save_route_history, item)
+        # background_tasks.add_task(save_route_history, item)
 
         return response_data
 
     except Exception as e:
         logger.error(f"Error processing: {str(e)}")
         raise HTTPException(status_code=500, detail=str(e))
-        
-@app.get("/show-map")
-def show_map():
-    file_path = "/app/model_test/compare.html"
-        
-    if os.path.exists(file_path):
-        return FileResponse(file_path)
-    else:
-        return {"error": "지도 파일이 아직 생성되지 않았습니다. /calculate-route 를 먼저 실행하세요."}
