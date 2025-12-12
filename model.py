@@ -826,11 +826,8 @@ def visualize_routes(
     if "density_per_km" not in edges.columns:
         edges["density_per_km"] = 0.0
         
-    vals = edges["density_per_km"]
-    # 하위 5% ~ 상위 5% 기준으로 색상 범위 설정 (너무 튀는 값 제외)
-    vmin = float(vals.quantile(0.05))
-    vmax = float(vals.quantile(0.95))
-    if vmin == vmax: vmax = vmin + 0.0001
+    vmin = 0.0
+    vmax = 50
     
     cmap = cm.linear.RdYlGn_11.scale(vmin, vmax)
     cmap.caption = "Safety Score (CCTV Density)"
@@ -988,3 +985,4 @@ if __name__ == "__main__":
         out_html=MAIN_OUT_HTML,
         visualize=MAIN_VISUALIZE,
     )
+
