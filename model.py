@@ -276,10 +276,8 @@ def extract_visual_segments(G: nx.MultiDiGraph) -> List[Dict[str, Any]]:
     if "density_per_km" not in edges.columns:
         edges["density_per_km"] = 0.0
 
-    vals = edges["density_per_km"]
-    vmin = float(vals.quantile(0.05))
-    vmax = float(vals.quantile(0.95))
-    if vmin == vmax: vmax = vmin + 0.0001
+    vmin = 0.0
+    vmax = 20
 
     # Python에서 색상 코드를 계산해주는 도구 (기존과 동일한 로직)
     cmap = cm.linear.RdYlGn_11.scale(vmin, vmax)
@@ -827,7 +825,7 @@ def visualize_routes(
         edges["density_per_km"] = 0.0
         
     vmin = 0.0
-    vmax = 50
+    vmax = 20
     
     cmap = cm.linear.RdYlGn_11.scale(vmin, vmax)
     cmap.caption = "Safety Score (CCTV Density)"
@@ -985,4 +983,5 @@ if __name__ == "__main__":
         out_html=MAIN_OUT_HTML,
         visualize=MAIN_VISUALIZE,
     )
+
 
